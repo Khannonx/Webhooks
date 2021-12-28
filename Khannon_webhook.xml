@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+<!-- Saved on Tuesday, December 28, 2021, 2:53 PM -->
+<!-- MuClient version 5.01 -->
+
+<muclient>
+<plugin
+   name="Khannon_webhook"
+   author="Khannon"
+   id="037da47b540aaa505c0c2982"
+   language="Lua"
+   purpose="clan chat echo to discord"
+   save_state="y"
+   date_written="2021-12-28 14:51:44"
+   requires="4.00"
+   version="1.00"
+   >
+</plugin>
+
+
+<!--  Triggers  -->
+<triggers>
+<trigger
+   enabled="y"
+   match="^(.*?) tells the CLAN\: '(.*?)'$"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   script="ClanEcho"
+  >
+  </trigger>
+</triggers>
+<!--  Aliases  -->
+
+<aliases>
+  <alias
+   match="reserved"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  </alias>
+</aliases>
+
+<script>
+<![CDATA[
+local json = require("json")
+local ltn12 = require("ltn12")
+local discordURL = "https://discord.com/api/webhooks/733381682438078514/5hDMh9vNZCi6o-gX33RthSGL6Laz3cUutZttmoFOgjuDx_5YQoABNLT8U0vPXW1Ml559"
+async_ok, async = pcall (require, "async")
+payload = {}
+
+function ClanEcho(n,l,wc)
+		
+        -- username : [string] - if used, it overrides the default username of the webhook
+        -- embeds : [array] - array of embed objects. That means, you can use more than one in the same body 
+		payload = {
+          username= wc[1],
+          embeds={{color=15844367,description=wc[2]}}}  
+		
+if async_ok then
+     async.doAsyncRemoteRequest(discordURL, is_alive, "HTTPS")
+end--end async_ok
+end
+
+function is_alive(retval, page, status, headers, full_status, requested_url, request_body)
+     if status == 200 then -- 200 is the HTTP status code for "OK"
+          local body = {}
+          body["headers"]={}
+          local encode = json.encode(payload)
+	
+          body.headers["content-type"] = "application/json"
+          body["source"] = encode
+
+          async.doAsyncRemoteRequest(discordURL, result_function, "HTTPS", 120, timeout_function, body)
+
+	else
+		print("access error")
+	end
+end
+
+function result_function(retval, page, status, headers, full_status, requested_url, request_body)
+
+end
+
+function timeout_function()
+	print("Timed out")
+end
+
+]]>
+</script> 
+
+</muclient>
