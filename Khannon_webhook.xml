@@ -47,7 +47,7 @@
 <![CDATA[
 local json = require("json")
 local ltn12 = require("ltn12")
-local discordURL = "https://discord.com/api/webhooks/733381682438078514/5hDMh9vNZCi6o-gX33RthSGL6Laz3cUutZttmoFOgjuDx_5YQoABNLT8U0vPXW1Ml559"
+local discordURL = "WEBHOOK URL HERE"
 async_ok, async = pcall (require, "async")
 payload = {}
 
